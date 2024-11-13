@@ -1,0 +1,15 @@
+verbose: false
+metadata_file_train: "data/metadata_30_sec_train.csv"
+metadata_file_valid: "data/metadata_30_sec_valid.csv"
+data_dir: "data/genres_original"
+device: "cuda"
+transform: "mfcc"
+target_sr: 20050
+duration: 6
+n_fft: 2048
+hop_length: 512
+n_mels: 16
+n_frames: null
+batch_size: 64
+epochs: 1000
+learning_rate: 0.01
