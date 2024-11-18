@@ -1,6 +1,6 @@
 # Music Genre Classification using CNN
 
-Welcome to Music Genre Classification Project using Convolutional Neural Networks (CNN) to classify music tracks into genres. The aim of this project is to experiment on CNN to capture intricate patterns in the audio data in order to enable genre prediction.
+Welcome to Music Genre Classification Project using Convolutional Neural Networks (CNN) to classify music tracks into genres.
 
 ## Overview
 
