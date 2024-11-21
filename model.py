@@ -111,17 +111,21 @@ class MusicRecNet(nn.Module):
 
         self.cnn = modules
         self.flatten = nn.Flatten()
-        self.dense = nn.Linear(in_channels * (n_mels // 2 ** len(filters)) * (n_frames // 2 ** len(filters)), 10)
+        dense_out = 32
+        self.dense = nn.Linear(in_channels * (n_mels // 2 ** len(filters)) * (n_frames // 2 ** len(filters)), dense_out)
         self.relu = nn.ReLU()
-        self.dropout = nn.Dropout(0.3)
-        self.dense_2 = nn.Linear(10, 10)
+        # self.dropout = nn.Dropout(0.3)
+        self.batchnorm = nn.BatchNorm1d(dense_out)
+        self.dense_2 = nn.Linear(dense_out, 10)
         self.softmax = nn.Softmax(dim=1)
 
     def forward(self, x):
         x = self.cnn(x)
         x = self.flatten(x)
         x = self.dense(x)
-        x = self.dropout(x)
+        x = self.relu(x)
+        # x = self.dropout(x)
+        x = self.batchnorm(x)
         x = self.dense_2(x)
         x = self.softmax(x)
         return x

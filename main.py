@@ -17,7 +17,7 @@ if __name__ == "__main__":
 
     # Parse arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument("--config", type=str, default="config/test_config.yaml")
+    parser.add_argument("--config", type=str, default="config/config.yaml")
     parser.add_argument("-e","--epochs", type=int, default=None)
     parser.add_argument("-bs","--batch_size", type=int, default=None)
     parser.add_argument("-lr","--learning_rate", type=int, default=None)
@@ -49,6 +49,7 @@ if __name__ == "__main__":
     hop_length = config["hop_length"]
     n_mels = config["n_mels"]
     n_frames = config["n_frames"]
+    filters = config["filters"]
     
     if config["n_frames"] is not None:
         n_frames = config["n_frames"]
@@ -84,7 +85,7 @@ if __name__ == "__main__":
     # Define loss function, model and optimizer
     loss_fn = nn.CrossEntropyLoss()
     # model = CNN_Network().to(device)
-    model = MusicRecNet(n_mels=n_mels, n_frames=n_frames, filters=[64, 32, 32, 16]).to(device)
+    model = MusicRecNet(n_mels=n_mels, n_frames=n_frames, filters=filters).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     # optimizer = torch.optim.Adadelta(model.parameters(), lr=lr)
 

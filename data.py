@@ -29,6 +29,8 @@ class MusicDataset(Dataset):
         self.n_fft = self.config["n_fft"]
         self.hop_length = self.config["hop_length"]
         self.target_sr = self.config["target_sr"]
+        self.full_audio_length = self.config["full_audio_length"]
+        self.transformation_type = self.config["transform"]
 
         
         if self.config["n_frames"] is not None and self.config["duration"] is not None:
@@ -54,36 +56,38 @@ class MusicDataset(Dataset):
         audio_path = os.path.join(self.data_dir, label, self.metadata.iloc[index].filename)
         signal, sr = torchaudio.load(audio_path, normalize=True)
         signal = signal.to(self.device)
+        if self.full_audio_length:
+            onset = self.metadata.iloc[index].onset
+            offset = self.metadata.iloc[index].offset
         if sr != self.target_sr:
             signal = torchaudio.transforms.Resample(sr, self.target_sr)(signal)
 
-        if signal.size(1) != self.n_samples:
+        if signal.size(1) != self.n_samples and not self.full_audio_length:
             signal = self._reshape_signal(signal, random_sample=self.random_sample)
 
-        # normalize the signal
-        # mean = signal.mean(dim=1, keepdim=True)
-        # peak = torch.max(torch.max(signal), torch.min(signal))
-        # signal = (signal - mean) / (1e-10 + peak)
+        if self.full_audio_length:
+            signal = signal[:, onset:offset]
+            if signal.size(1) < self.n_samples:
+                signal = torch.nn.functional.pad(signal, (0, self.n_samples - signal.size(1)))
+
+        # normalize the signal (peak normalization)
+        mean = signal.mean(dim=1, keepdim=True)
+        peak = torch.max(torch.max(signal), torch.min(signal))
+        signal = (signal - mean) / (1e-10 + peak)
 
         signal = self.transformation(signal)
 
-        ## normalize the output
-        ## normal distribution
-        # mean = signal.mean(dim=2, keepdim=True)
-        # stdev = signal.std(dim=2, keepdim=True)
-        # signal = (signal - mean) / (stdev + 1e-10)
+        if self.transformation_type == "mel_spectrogram":
 
-        ## peak normalization
-        # mean = signal.mean(dim=1, keepdim=True)
-        # peak = torch.max(torch.max(signal), torch.min(signal))
-        # signal = (signal - mean) / (1e-10 + peak)   
+            ## normalize the output
 
-        ## log normalization
-        # signal = torch.log(signal)  
+            ## normal distribution
+            mean = signal.mean(dim=2, keepdim=True)
+            stdev = signal.std(dim=2, keepdim=True)
+            signal = (signal - mean) / (stdev + 1e-10) 
 
-        ## au carré
-        # signal = signal ** 2
-
+            ## log normalization
+            # signal = torch.log(signal)
 
         return signal, label_int
     

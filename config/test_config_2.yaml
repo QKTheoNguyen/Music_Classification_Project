@@ -1,15 +1,17 @@
 verbose: false
-metadata_file_train: "data/metadata_30_sec_train.csv"
-metadata_file_valid: "data/metadata_30_sec_valid.csv"
+metadata_file_train: "data/metadata_6_sec_train.csv"
+metadata_file_valid: "data/metadata_6_sec_valid.csv"
 data_dir: "data/genres_original"
 device: "cuda"
 transform: "mfcc"
+full_audio_length: true
 target_sr: 20050
 duration: 6
 n_fft: 2048
 hop_length: 512
 n_mels: 16
 n_frames: null
+filters: [64, 32, 32, 16]
 batch_size: 64
-epochs: 1000
+epochs: 100
 learning_rate: 0.01
