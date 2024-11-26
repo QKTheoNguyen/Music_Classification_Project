@@ -11,6 +11,7 @@ n_fft: 2048
 hop_length: 512
 n_mels: 16
 n_frames: null
+model_name: "CNN_new"
 filters: [32, 64, 128]
 batch_size: 64
 epochs: 100

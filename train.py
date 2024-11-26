@@ -36,8 +36,8 @@ def train(model, train_loader, valid_loader, config, loss_fn, optimizer, device,
         print(f"Train Loss: {train_loss}, Validation Loss: {valid_loss}, Validation Accuracy: {valid_accuracy}")
 
         if epoch == 0:
-            early_stopping = EarlyStopping(patience=5)
-            reduce_lr = ReduceLROnPlateau(factor=0.1, patience=2)
+            early_stopping = EarlyStopping(patience=16)
+            reduce_lr = ReduceLROnPlateau(factor=0.1, patience=5)
             tensorboard = TensorBoard(log_dir=log_dir, config=config)
             if not os.path.exists(f"trained/{date_time}"):
                 os.makedirs(f"trained/{date_time}")

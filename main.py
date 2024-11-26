@@ -50,6 +50,7 @@ if __name__ == "__main__":
     n_mels = config["n_mels"]
     n_frames = config["n_frames"]
     filters = config["filters"]
+    model_name = config["model_name"]
     
     if config["n_frames"] is not None:
         n_frames = config["n_frames"]
@@ -84,8 +85,16 @@ if __name__ == "__main__":
     
     # Define loss function, model and optimizer
     loss_fn = nn.CrossEntropyLoss()
-    # model = CNN_Network().to(device)
-    model = MusicRecNet(n_mels=n_mels, n_frames=n_frames, filters=filters).to(device)
+
+    if model_name == "CNN_Network":
+        model = CNN_Network().to(device)
+    elif model_name == "MusicRecNet":
+        model = MusicRecNet(n_mels=n_mels, n_frames=n_frames, filters=filters).to(device)
+    elif model_name == "CNN_new":
+        model = CNN_new(n_mels=n_mels, n_frames=n_frames).to(device)
+    else:
+        raise ValueError("Model not found")
+
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     # optimizer = torch.optim.Adadelta(model.parameters(), lr=lr)
 

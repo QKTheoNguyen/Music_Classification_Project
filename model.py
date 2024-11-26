@@ -111,7 +111,7 @@ class MusicRecNet(nn.Module):
 
         self.cnn = modules
         self.flatten = nn.Flatten()
-        dense_out = 32
+        dense_out = 16
         self.dense = nn.Linear(in_channels * (n_mels // 2 ** len(filters)) * (n_frames // 2 ** len(filters)), dense_out)
         self.relu = nn.ReLU()
         # self.dropout = nn.Dropout(0.3)
@@ -130,8 +130,48 @@ class MusicRecNet(nn.Module):
         x = self.softmax(x)
         return x
 
+class CNN_new(nn.Module):
+    def __init__(self,
+                 n_mels,
+                 n_frames):
+        super(CNN_new, self).__init__()
 
-    
+        modules = nn.Sequential()
+
+        modules.add_module('conv1', nn.Conv2d(1, 64, kernel_size=(3, 3), padding=(1, 1)))
+        modules.add_module('relu1', nn.ReLU())
+        modules.add_module('maxpool1', nn.MaxPool2d(kernel_size=(3, 3), stride=(2, 2)))
+        modules.add_module('batchnorm1', nn.BatchNorm2d(64))
+
+        modules.add_module('conv2', nn.Conv2d(64, 32, kernel_size=(3, 3), padding=(1, 1)))
+        modules.add_module('relu2', nn.ReLU())
+        modules.add_module('maxpool2', nn.MaxPool2d(kernel_size=(3, 3), stride=(2, 2)))
+        modules.add_module('batchnorm2', nn.BatchNorm2d(32))
+
+        modules.add_module('conv3', nn.Conv2d(32, 32, kernel_size=(2, 2), padding=(0, 0)))
+        modules.add_module('relu3', nn.ReLU())
+        modules.add_module('maxpool3', nn.MaxPool2d(kernel_size=(2, 2), stride=(2, 2)))
+        modules.add_module('batchnorm3', nn.BatchNorm2d(32))
+
+        modules.add_module('conv4', nn.Conv2d(32, 16, kernel_size=(1, 1), padding=(0, 0)))
+        modules.add_module('relu4', nn.ReLU())
+        modules.add_module('maxpool4', nn.MaxPool2d(kernel_size=(1, 1), stride=(2, 2)))
+        modules.add_module('batchnorm4', nn.BatchNorm2d(16))
+
+        modules.add_module('flatten', nn.Flatten())
+        modules.add_module('dense1', nn.Linear(16 * (n_mels // 2 ** 4) * (n_frames // 2 ** 4), 64))
+        modules.add_module('relu5', nn.ReLU())
+        # modules.add_module('batchnorm5', nn.BatchNorm1d(64))
+        modules.add_module('dropout', nn.Dropout(0.3))
+        modules.add_module('dense2', nn.Linear(64, 10))
+
+        self.cnn = modules
+
+    def forward(self, x):
+        return self.cnn(x)
+
+
+
 if __name__ == "__main__":
     
     # model = CNN_Network()
@@ -144,16 +184,29 @@ if __name__ == "__main__":
     # print(f'Output : {y.size()}')
     # print(f'Output logits : {y}')
 
+    # n_mels = 16
+    # n_samples = 6 * 20050
+    # n_frames = 1 + (n_samples - 2048) // 512
+    # print(f'n_frames : {n_frames}, n_samples : {n_samples}, n_mels : {n_mels}')
+    # model_RecNet = MusicRecNet(n_mels=n_mels, n_frames=n_frames, filters=[32, 64, 128])
+    # summary(model_RecNet, (1, n_mels, n_frames))
+
+    # print(f'----- MusicRecNet model -----')
+    # x = torch.randn(32, 1, n_mels, n_frames)
+    # y = model_RecNet(x)
+    # print(f'Input : {x.size()}')
+    # print(f'Output : {y.size()}')
+
     n_mels = 16
     n_samples = 6 * 20050
     n_frames = 1 + (n_samples - 2048) // 512
     print(f'n_frames : {n_frames}, n_samples : {n_samples}, n_mels : {n_mels}')
-    model_RecNet = MusicRecNet(n_mels=n_mels, n_frames=n_frames, filters=[64, 32, 32, 16])
-    summary(model_RecNet, (1, n_mels, n_frames))
+    model_CNN_new = CNN_new(n_mels=n_mels, n_frames=n_frames)
+    summary(model_CNN_new, (1, n_mels, n_frames))
 
-    print(f'----- MusicRecNet model -----')
+    print(f'----- CNN_new model -----')
     x = torch.randn(32, 1, n_mels, n_frames)
-    y = model_RecNet(x)
+    y = model_CNN_new(x)
     print(f'Input : {x.size()}')
     print(f'Output : {y.size()}')
 
