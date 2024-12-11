@@ -11,9 +11,12 @@ The training of the CNN model is meant to be used on a single CPU. To reduce dat
 ## Experiments
 
 The model was trained on 70% of the GTZAN dataset, validated on 15%, and tested on the remaining 15%.
+
 The architecture of the CNN model is flexible, allowing experiment on the number of layers and filters. 
-The architecture of the model is inspired by the [MusicRecNet model](https://ietresearch.onlinelibrary.wiley.com/doi/full/10.1049/el.2019.4202)
-Various time-frequency transformation can be tested in the feature extraction step. In this case, Mel-spectrograms and MFCCs have been used. 
+The architecture of the model is inspired by the [MusicRecNet model](https://ietresearch.onlinelibrary.wiley.com/doi/full/10.1049/el.2019.4202).
+
+Various time-frequency transformations can be tested in the feature extraction step. In this case, Mel-spectrograms and MFCCs have been used. 
+
 The model is trained using the Adam optimizer and the categorical cross-entropy loss function. 
 
 ## Results
