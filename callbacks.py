@@ -56,11 +56,16 @@ class ModelCheckpoint:
         self.model = model
         self.save_path = save_path
         self.best_score = None
+        self.epoch = None
+        self.save = False
 
-    def __call__(self, val_loss):
+    def __call__(self, val_loss, epoch):
+        self.save = False
+        self.epoch = epoch
         if self.best_score is None or val_loss < self.best_score:
+            self.save = True
             self.best_score = val_loss
-            torch.save(self.model.state_dict(), self.save_path)
+            torch.save(self.model.state_dict(), os.path.join(self.save_path, "model.pth"))
 
 class TensorBoard:
     def __init__(self, log_dir, config):

@@ -21,7 +21,7 @@ def load_config(config_path):
 def train(model, train_loader, valid_loader, config, loss_fn, optimizer, device, epochs, verbose=False):
 
     date_time = datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
-    log_dir = "logs/" + date_time
+    log_dir = "trained/" + date_time
     if verbose:
         print(f"Training {date_time} started")
     
@@ -41,12 +41,12 @@ def train(model, train_loader, valid_loader, config, loss_fn, optimizer, device,
             tensorboard = TensorBoard(log_dir=log_dir, config=config)
             if not os.path.exists(f"trained/{date_time}"):
                 os.makedirs(f"trained/{date_time}")
-            checkpoint = ModelCheckpoint(model, save_path=f"trained/{date_time}/model.pth")
+            checkpoint = ModelCheckpoint(model, save_path=f"trained/{date_time}")
 
         early_stopping(valid_loss)
         reduce_lr(valid_loss, optimizer)
         tensorboard(epoch, train_loss, valid_loss)
-        checkpoint(valid_loss)
+        checkpoint(valid_loss, epoch)
 
         if reduce_lr.reduce_lr:
             print(f"Reducing learning rate to {optimizer.param_groups[0]['lr']}")
@@ -54,6 +54,9 @@ def train(model, train_loader, valid_loader, config, loss_fn, optimizer, device,
         if early_stopping.early_stop:
             print("Early stopping")
             break
+
+        if checkpoint.save:
+            print("Model saved")
 
     tensorboard.close()
 

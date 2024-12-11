@@ -164,6 +164,7 @@ class CNN_new(nn.Module):
         # modules.add_module('batchnorm5', nn.BatchNorm1d(64))
         modules.add_module('dropout', nn.Dropout(0.3))
         modules.add_module('dense2', nn.Linear(64, 10))
+        modules.add_module('softmax', nn.Softmax(dim=1))
 
         self.cnn = modules
 

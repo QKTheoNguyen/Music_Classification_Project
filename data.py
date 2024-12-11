@@ -114,10 +114,10 @@ if __name__ == "__main__":
             config = yaml.safe_load(file)
         return config
 
-    split = 'train'
+    split = 'test'
     metadata_file = f'data/metadata_30_sec_{split}.csv'
     data_dir = "data/genres_original"
-    config_path = "config/test_config.yaml"
+    config_path = "config/config.yaml"
     config = load_config(config_path)
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -126,26 +126,40 @@ if __name__ == "__main__":
     n_fft = config["n_fft"]
     hop_length = config["hop_length"]
     n_mels = config["n_mels"]
+    transform = config["transform"]
 
-    mel_spectrogram = torchaudio.transforms.MelSpectrogram(sample_rate=target_sr,
-                                                           n_fft=n_fft,
-                                                           hop_length=hop_length,
-                                                           n_mels=n_mels,
-                                                           center=False,
-                                                           normalized=True)
 
-    dataset = MusicDataset(config, metadata_file, data_dir, mel_spectrogram, device, random_sample=True)
+    if transform == "mel_spectrogram":
+
+        transformation = torchaudio.transforms.MelSpectrogram(sample_rate=target_sr,
+                                                              n_fft=n_fft,
+                                                              hop_length=hop_length,
+                                                              n_mels=n_mels,
+                                                              normalized=False,
+                                                              center=False)
+    
+    elif transform == "mfcc":
+        transformation = torchaudio.transforms.MFCC(sample_rate=target_sr,
+                                                    n_mfcc=n_mels,
+                                                    melkwargs={"n_fft": n_fft, 
+                                                                "hop_length": hop_length, 
+                                                                "n_mels": n_mels,
+                                                                "normalized": False,
+                                                                "center": False})
+
+    dataset = MusicDataset(config, metadata_file, data_dir, transformation, device, random_sample=True)
     # print(f'dataset length : {len(dataset)}')
 
     # signal, label = dataset[0]
     # print(f'sample shape : {signal.shape}, label : {label}')
 
     train_loader = DataLoader(dataset=dataset, 
-                            batch_size=4, 
-                            shuffle=True)
+                            batch_size=5, 
+                            shuffle=False)
     
     (data, target) = next(iter(train_loader))
 
     print(f"Data shape : {data.size()}")
     print(f"Target shape : {target.size()}")
     print(f"Target : {target}")
+    print(f'Data min : {data.min()}, max : {data.max()}')
