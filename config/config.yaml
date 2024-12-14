@@ -13,6 +13,7 @@ n_mels: 16
 n_frames: null
 model_name: "MusicRecNet"
 filters: [32, 64, 128]
+add_dropout: true
 batch_size: 64
 epochs: 100
 learning_rate: 0.01

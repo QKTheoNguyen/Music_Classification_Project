@@ -84,7 +84,7 @@ def train_single_epoch(model, train_loader, loss_fn, optimizer, device, verbose=
 
 def validate_single_epoch(model, valid_loader, loss_fn, device, verbose=False):
 
-    # model.eval()
+    model.eval()
     val_loss = 0
     correct = 0
     total = 0
@@ -123,6 +123,9 @@ def validate_single_epoch(model, valid_loader, loss_fn, device, verbose=False):
     accuracy = correct / total
     val_loss /= len(valid_loader)
     # print(f"Validation Loss: {val_loss}, Accuracy: {accuracy}")
+
+    model.train()
+
     return val_loss, accuracy
 
 if __name__ == "__main__":

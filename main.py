@@ -50,6 +50,7 @@ if __name__ == "__main__":
     n_mels = config["n_mels"]
     n_frames = config["n_frames"]
     filters = config["filters"]
+    add_dropout = config["add_dropout"]
     model_name = config["model_name"]
     
     if config["n_frames"] is not None:
@@ -89,7 +90,7 @@ if __name__ == "__main__":
     if model_name == "CNN_Network":
         model = CNN_Network().to(device)
     elif model_name == "MusicRecNet":
-        model = MusicRecNet(n_mels=n_mels, n_frames=n_frames, filters=filters).to(device)
+        model = MusicRecNet(n_mels=n_mels, n_frames=n_frames, filters=filters, add_dropout=add_dropout).to(device)
     elif model_name == "CNN_new":
         model = CNN_new(n_mels=n_mels, n_frames=n_frames).to(device)
     else:
